@@ -1,4 +1,4 @@
-# QuantumStoragePersistentMongodb
+# Quantum Storage Persistent Mongodb
 
 **TODO: Add description**
 
