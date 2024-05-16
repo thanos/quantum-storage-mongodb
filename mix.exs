@@ -1,13 +1,23 @@
 defmodule QuantumStoragePersistentMongodb.MixProject do
   use Mix.Project
 
+  @version "1.0.0"
+
   def project do
     [
       app: :quantum_storage_persistent_mongodb,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.14",
+      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      docs: docs(),
+      name: "Quantum Storage Mongodb",
+      description: "Quantum Storage Adapter based on Mongodb",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      package: package(),
+      test_coverage: [tool: ExCoveralls],
+      build_embedded: (System.get_env("BUILD_EMBEDDED") || "false") in ["1", "true"]
     ]
   end
 
@@ -18,11 +28,47 @@ defmodule QuantumStoragePersistentMongodb.MixProject do
     ]
   end
 
+  defp package do
+    %{
+      maintainers: [
+        "Thanos Vassilakis"
+      ],
+      licenses: ["MIT"],
+      exclude_patterns: [~r[priv/(tables|plts)]],
+      links: %{
+        "Changelog" =>
+          "https://github.com/thanos/quantum-storage-mongodb/blob/master/CHANGELOG.md",
+        "GitHub" => "https://github.com/thanos/quantum-storage-mongodbs"
+      }
+    }
+  end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  defp docs do
+    [
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: "https://github.com/quantum-elixir/quantum-storage-persistent-ets",
+      extras: [
+        "README.md",
+        "CHANGELOG.md"
+      ]
+    ]
+  end
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:mongodb_driver, "~> 1.4"},
+      {:quantum, "~> 3.0"},
+      {:mongodb_driver, "~> 1.4"},
+      {:ex_doc, "~> 0.13", only: [:dev, :docs], runtime: false},
+      {:excoveralls, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:mimic, "~> 1.7", only: :test}
     ]
   end
 end
