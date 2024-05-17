@@ -1,6 +1,8 @@
 defmodule QuantumStorageMongodb do
   @moduledoc """
   `MongoDB` based implementation of a `Quantum.Storage`.
+
+  To use this  `Quantum.Storage` add it to
   """
 
   use GenServer
