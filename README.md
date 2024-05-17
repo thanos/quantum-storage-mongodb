@@ -24,5 +24,6 @@ use Mix.Config
 
 config :quantum_test, QuantumTest.Scheduler,
   storage: QuantumStorageMongodb
+   storage_opts: [ url: "mongodb://localhost:27017/my-database", collection: "quantum"]
 
 ```

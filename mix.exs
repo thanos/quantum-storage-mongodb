@@ -45,7 +45,7 @@ defmodule QuantumStoragePersistentMongodb.MixProject do
       links: %{
         "Changelog" =>
           "https://github.com/thanos/quantum-storage-mongodb/blob/master/CHANGELOG.md",
-        "GitHub" => "https://github.com/thanos/quantum-storage-mongodbs"
+        "GitHub" => "https://github.com/thanos/quantum-storage-mongodb"
       }
     }
   end
