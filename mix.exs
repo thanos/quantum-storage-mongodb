@@ -57,7 +57,7 @@ defmodule QuantumStoragePersistentMongodb.MixProject do
     [
       main: "readme",
       source_ref: "v#{@version}",
-      source_url: "https://github.com/quantum-elixir/quantum-storage-persistent-ets",
+      source_url: "https://github.com/thanos/quantum-storage-mongodb",
       extras: [
         "README.md"
       ]
