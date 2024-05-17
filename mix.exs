@@ -1,11 +1,11 @@
 defmodule QuantumStoragePersistentMongodb.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.0.1"
 
   def project do
     [
-      app: :quantum_storage_persistent_mongodb,
+      app: :quantum_storage_mongodb,
       version: @version,
       elixir: "~> 1.14",
       build_embedded: Mix.env() == :prod,
@@ -17,6 +17,13 @@ defmodule QuantumStoragePersistentMongodb.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.cobertura": :test
+      ],
       build_embedded: (System.get_env("BUILD_EMBEDDED") || "false") in ["1", "true"]
     ]
   end
@@ -52,8 +59,7 @@ defmodule QuantumStoragePersistentMongodb.MixProject do
       source_ref: "v#{@version}",
       source_url: "https://github.com/quantum-elixir/quantum-storage-persistent-ets",
       extras: [
-        "README.md",
-        "CHANGELOG.md"
+        "README.md"
       ]
     ]
   end

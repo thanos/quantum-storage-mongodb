@@ -190,7 +190,6 @@ defmodule QuantumStorageMongodb do
   def encode_job(job), do: :erlang.term_to_binary(job)
   def decode_job(job), do: :erlang.binary_to_term(job)
   def encode_name(name), do: :erlang.term_to_binary(name)
-  def decode_name(name), do: :erlang.binary_to_term(name)
   def encode_date(date), do: :erlang.term_to_binary(date)
   def decode_date(date), do: :erlang.binary_to_term(date)
 end
