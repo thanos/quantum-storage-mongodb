@@ -50,10 +50,11 @@ config :quantum_test, QuantumTest.Scheduler,
      :ssl,
      :pool_size,
      :seeds
-````
+```
 
 see https://hexdocs.pm/mongodb_driver/readme.html#usage
 
 ```
 
 ```
+````
