@@ -2,6 +2,8 @@
 
 [![Hex.pm Version](http://img.shields.io/hexpm/v/quantum_storage_mongodb.svg)](https://hex.pm/packages/quantum_storage_mongodb)
 
+[![Coverage Status](https://coveralls.io/repos/github/thanos/quantum-storage-mongodb/badge.svg?branch=main)](https://coveralls.io/github/thanos/quantum-storage-mongodb?branch=main)
+
 ## What
 
 Quantum storage adapter for mongodb. This is a copy of persistent ets implementation
