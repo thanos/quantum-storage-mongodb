@@ -12,10 +12,10 @@ defmodule QuantumStorageMongodbTest do
 
   setup %{test: test} do
     storage =
-      start_supervised!(
-        {QuantumStorageMongodb,
-         collection: Module.concat(__MODULE__, test), url: "mongodb://localhost:27017/my-database"}
-      )
+      start_supervised!({
+        QuantumStorageMongodb,
+        collection: "QuantumStorageMongodb.test", url: "mongodb://localhost:27017/my-database"
+      })
 
     assert :ok = QuantumStorageMongodb.purge(storage)
 

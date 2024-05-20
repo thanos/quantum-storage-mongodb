@@ -11,6 +11,19 @@ defmodule QuantumStorageMongodb do
 
   @behaviour Quantum.Storage
 
+  @supported_mongo_options [
+    :url,
+    :host,
+    :port,
+    :database,
+    :username,
+    :password,
+    :auth_source,
+    :ssl,
+    :pool_size,
+    :seeds
+  ]
+
   #
   #
   # API
@@ -18,8 +31,10 @@ defmodule QuantumStorageMongodb do
   #
 
   @doc false
-  def start_link(opts),
-    do: GenServer.start_link(__MODULE__, opts, opts)
+  def start_link(opts) do
+    Logger.info("opts: #{inspect(opts)}")
+    GenServer.start_link(__MODULE__, opts, opts)
+  end
 
   @doc false
   @impl Quantum.Storage
@@ -62,18 +77,19 @@ defmodule QuantumStorageMongodb do
   @doc false
   @impl GenServer
   def init(opts) do
-    {:ok, conn} =
-      Mongo.start_link(
-        url: opts |> Keyword.fetch!(:url)
-        # username: opts |> Keyword.fetch!(:username),
-        # password: opts |> Keyword.fetch!(:password),
-        # auth_source: opts |> Keyword.fetch!(:auth_source)
-      )
+    Logger.info("opts: #{inspect(opts)}")
+    collection = opts |> Keyword.fetch!(:collection)
+
+    opts =
+      opts
+      |> Keyword.take(@supported_mongo_options)
+
+    {:ok, conn} = Mongo.start_link(opts)
 
     {:ok,
      %{
        db: conn,
-       collection: opts |> Keyword.fetch!(:collection)
+       collection: collection
      }}
   end
 
