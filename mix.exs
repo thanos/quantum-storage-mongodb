@@ -69,7 +69,6 @@ defmodule QuantumStoragePersistentMongodb.MixProject do
     [
       {:mongodb_driver, "~> 1.4"},
       {:quantum, "~> 3.0"},
-      {:mongodb_driver, "~> 1.4"},
       {:ex_doc, "~> 0.13", only: [:dev, :docs], runtime: false},
       {:excoveralls, "~> 0.13", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
