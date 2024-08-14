@@ -84,11 +84,19 @@ defmodule QuantumStorageMongodb do
       opts
       |> Keyword.take(@supported_mongo_options)
 
-    {:ok, conn} = Mongo.start_link(opts)
+    db =
+      case opts |> Keyword.get(:repo) do
+        nil ->
+          {:ok, db} = Mongo.start_link(opts)
+          db
+
+        repo ->
+          Keyword.get(repo.config(), :name)
+      end
 
     {:ok,
      %{
-       db: conn,
+       db: db,
        collection: collection
      }}
   end
@@ -102,6 +110,7 @@ defmodule QuantumStorageMongodb do
     Mongo.insert_one(db, collection, %{
       "_id" => encode_name(job.name),
       "job" => encode_job(job),
+      "readable" => readable(job),
       "type" => "data"
     })
 
@@ -124,13 +133,15 @@ defmodule QuantumStorageMongodb do
     %{"_id" => id, "job" => job} =
       Mongo.find_one(db, collection, %{"_id" => encode_name(job_name)})
 
+    updated_job =
+      job
+      |> decode_job!()
+      |> Quantum.Job.set_state(job_state)
+
     Mongo.update_one(db, collection, %{"_id" => id}, %{
       "$set" => %{
-        "job" =>
-          job
-          |> decode_job()
-          |> Quantum.Job.set_state(job_state)
-          |> encode_job()
+        "job" => encode_job(updated_job),
+        "readable" => readable(job)
       }
     })
 
@@ -168,7 +179,7 @@ defmodule QuantumStorageMongodb do
      Mongo.find_one(db, collection, %{"_id" => "last_execution_date"})
      |> case do
        nil -> :unknown
-       %{"date" => date} -> date |> decode_date
+       %{"date" => date} -> date |> decode_date!
      end, state}
   end
 
@@ -193,7 +204,7 @@ defmodule QuantumStorageMongodb do
        jobs ->
          jobs
          |> Enum.reject(fn %{"type" => type} -> type == "bookkeeping" end)
-         |> Enum.map(fn %{"job" => job} -> job |> decode_job end)
+         |> Enum.map(fn %{"job" => job} -> job |> decode_job! end)
      end, state}
   end
 
@@ -206,17 +217,31 @@ defmodule QuantumStorageMongodb do
   end
 
   @doc false
-  def encode_job(job), do: :erlang.term_to_binary(job)
+  def encode_job(job), do: job |> :erlang.term_to_binary() |> Base.encode16()
 
   @doc false
-  def decode_job(job), do: :erlang.binary_to_term(job)
+  def decode_job!(job), do: job |> Base.decode16!() |> :erlang.binary_to_term()
 
   @doc false
-  def encode_name(name), do: :erlang.term_to_binary(name)
+  def encode_name(nil), do: nil
+  def encode_name(name) when is_atom(name), do: name |> Atom.to_string()
+  def encode_name(name) when is_reference(name), do: name |> inspect(limit: :infininty)
+
+  def decode_name!(nil), do: nil
+
+  def decode_name!("#Reference<" <> ref_part) do
+    length = String.length(ref_part)
+    ref_part |> String.slice(0, length - 1)
+    IEx.Helpers.ref(ref_part)
+  end
+
+  def decode_name!(name_str), do: name_str |> String.to_atom()
 
   @doc false
-  def encode_date(date), do: :erlang.term_to_binary(date)
+  def encode_date(date), do: date |> NaiveDateTime.to_iso8601()
 
   @doc false
-  def decode_date(date), do: :erlang.binary_to_term(date)
+  def decode_date!(date_str), do: date_str |> NaiveDateTime.from_iso8601!()
+
+  def readable(job), do: job |> inspect()
 end
